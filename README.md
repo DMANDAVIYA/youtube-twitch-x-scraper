@@ -2,7 +2,7 @@
 
 An advanced web scraper that finds YouTube and Twitch channels for users based on their X (Twitter) profile data. Uses sophisticated matching algorithms and parallel processing for efficient channel discovery.
 
-## 🚀 Features
+##  Features
 
 - **Sophisticated Matching**: Uses enhanced matching logic extracted from banana scraper with title verification, abbreviation patterns, and word-based matching
 - **Parallel Processing**: Configurable worker threads (1-10) for concurrent processing
@@ -12,7 +12,7 @@ An advanced web scraper that finds YouTube and Twitch channels for users based o
 - **Rate Limiting**: Smart delays to avoid getting blocked
 - **Comprehensive Logging**: Detailed logging with configurable verbosity
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 voice/
@@ -28,7 +28,7 @@ voice/
 └── README.md
 ```
 
-## 🛠 Installation
+##  Installation
 
 1. **Clone/Download** the project to your local machine
 
@@ -43,7 +43,7 @@ voice/
    pip install crawl4ai pandas beautifulsoup4 aiohttp aiofiles asyncio
    ```
 
-## 📊 Input Data Format
+##  Input Data Format
 
 The scraper expects a CSV file with the following columns:
 - `username`: X/Twitter username
@@ -58,7 +58,7 @@ kirstnicolexo,kirstie (taylor's version),http://brokenblame.tumblr.com/,350
 aliceyinyang,melis |,https://instagram.com/lifeisaroadtrip_/,957
 ```
 
-## 🚀 Usage
+##  Usage
 
 ### Basic Usage
 ```bash
@@ -73,7 +73,7 @@ python youtube_twitch_scraper.py --workers 5
 ### Interactive Mode
 The scraper will prompt you to select the number of parallel workers (1-10) for processing.
 
-## ⚙️ Configuration
+##  Configuration
 
 Edit `config.py` to customize:
 
@@ -114,7 +114,7 @@ MAX_PROXY_RETRIES = 3  # Maximum retries per proxy
 - **Shared State**: Thread-safe result saving and progress tracking
 - **Error Isolation**: Individual worker failures don't stop others
 
-## 📈 Output Format
+##  Output Format
 
 Results are saved to `results/youtube_twitch_results_enhanced.csv`:
 
@@ -129,7 +129,7 @@ kirstnicolexo,kirstie (taylor's version),http://brokenblame.tumblr.com/,350,http
 - **70-85**: High confidence match
 - **85+**: Very high confidence match
 
-## 🛡️ Proxy Management
+##  Proxy Management
 
 The scraper includes robust proxy management:
 - **Automatic Rotation**: Cycles through available proxies
@@ -137,7 +137,7 @@ The scraper includes robust proxy management:
 - **Format Support**: HTTP and HTTPS proxies
 - **Timeout Handling**: Configurable timeouts per proxy
 
-## 🔧 Advanced Features
+##  Advanced Features
 
 ### Resume Processing
 If interrupted, the scraper automatically resumes from where it left off by checking existing results.
@@ -170,7 +170,7 @@ Processing speed varies based on:
 
 Run the scraper on your dataset to get actual performance metrics.
 
-## 🐛 Troubleshooting
+##  Troubleshooting
 
 ### Common Issues
 
@@ -198,14 +198,14 @@ Check logs for detailed error information:
 - Errors and warnings provide troubleshooting details
 - Debug level shows detailed matching process
 
-## 📝 Notes
+##  Notes
 
 - **Ethical Usage**: Respects rate limits and uses delays
 - **Proxy Dependent**: Quality of results depends on proxy reliability  
 - **Platform Changes**: May need updates if YouTube/Twitch change their layouts
 - **False Positives**: Review results with lower scores manually
 
-## 🔄 Updates & Maintenance
+##  Updates & Maintenance
 
 ### Regular Maintenance
 1. Update proxy list monthly
@@ -219,7 +219,7 @@ Check logs for detailed error information:
 - Add result validation features
 - Create web interface
 
-## 📞 Support
+##  Support
 
 For issues or questions:
 1. Check logs for error details
