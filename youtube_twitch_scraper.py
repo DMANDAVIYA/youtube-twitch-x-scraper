@@ -448,16 +448,18 @@ class YouTubeTwitchScraper:
         results = {
             'youtube_url': None,
             'youtube_score': 0,
+            'youtube_not_sure': 0,
             'twitch_url': None,
-            'twitch_score': 0
+            'twitch_score': 0,
+            'twitch_not_sure': 0
         }
         
         # Create search queries
         queries = []
         if username:
-            queries.append(f'"{username}"')
+            queries.append(username)  # Removed quotes for better results
         if profile_name and profile_name != username:
-            queries.append(f'"{profile_name}"')
+            queries.append(profile_name)  # Removed quotes for better results
         if username and profile_name:
             queries.append(f'{username} {profile_name}')
         
@@ -466,26 +468,33 @@ class YouTubeTwitchScraper:
         if url:
             url_extracted_name = self.extract_name_from_url(url)
             if url_extracted_name and url_extracted_name not in [username, profile_name]:
-                queries.append(f'"{url_extracted_name}"')
+                queries.append(url_extracted_name)  # Removed quotes for better results
         
         # Remove empty queries
-        queries = [q for q in queries if q.strip() != '""' and q.strip()]
+        queries = [q for q in queries if q.strip()]
         queries = queries[:3]  # Limit queries to prevent overuse (increased from 2 to 3)
         
         # Search each platform
         for platform in ['youtube', 'twitch']:
             best_match = {'score': 0, 'title': None, 'url': None}
+            fallback_url = None
+            not_sure = 0  # Track if we used fallback (1) or enhanced matching (0)
             
             for query in queries:
                 try:
                     search_results = await self.search_engine.search_with_crawl4ai(query, platform)
                     
                     if search_results:
+                        # Store first URL for fallback (no filtering!)
+                        if not fallback_url:
+                            first_result = search_results[0]
+                            fallback_url = first_result.get('url', '')
+                        
                         for result in search_results:
                             title = result.get('title', '')
                             url = result.get('url', '')
                             
-                            # Filter valid URLs
+                            # Filter valid URLs for enhanced matching only
                             if platform == 'youtube':
                                 clean_url = URLFilter.filter_youtube_url(url)
                             else:
@@ -508,6 +517,7 @@ class YouTubeTwitchScraper:
                                     'title': title,
                                     'url': clean_url
                                 }
+                                not_sure = 0  # Enhanced match found
                                 
                                 # Found a good match, stop searching more results for this query
                                 break
@@ -527,14 +537,27 @@ class YouTubeTwitchScraper:
                 # Rate limiting between queries
                 await asyncio.sleep(random.uniform(2, 4))
             
-            # Store best match
+            # Store best match or fallback
             if best_match['score'] >= 50:
+                # Enhanced match found
                 if platform == 'youtube':
                     results['youtube_url'] = best_match['url']
                     results['youtube_score'] = best_match['score']
+                    results['youtube_not_sure'] = not_sure
                 else:
                     results['twitch_url'] = best_match['url']
                     results['twitch_score'] = best_match['score']
+                    results['twitch_not_sure'] = not_sure
+            elif fallback_url:
+                # Use fallback URL when enhanced matching fails
+                if platform == 'youtube':
+                    results['youtube_url'] = fallback_url
+                    results['youtube_score'] = 30
+                    results['youtube_not_sure'] = 1
+                else:
+                    results['twitch_url'] = fallback_url
+                    results['twitch_score'] = 30
+                    results['twitch_not_sure'] = 1
         
         return results
 
@@ -585,8 +608,8 @@ class YouTubeTwitchScraper:
             with open(self.output_file, 'a', newline='', encoding='utf-8') as csvfile:
                 fieldnames = [
                     'username', 'profile_name', 'url', 'followers',
-                    'youtube_url', 'youtube_score',
-                    'twitch_url', 'twitch_score'
+                    'youtube_url', 'youtube_score', 'youtube_not_sure',
+                    'twitch_url', 'twitch_score', 'twitch_not_sure'
                 ]
                 writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
                 
@@ -611,8 +634,8 @@ class YouTubeTwitchScraper:
                 with open(backup_file, 'a', newline='', encoding='utf-8') as csvfile:
                     fieldnames = [
                         'username', 'profile_name', 'url', 'followers',
-                        'youtube_url', 'youtube_score',
-                        'twitch_url', 'twitch_score'
+                        'youtube_url', 'youtube_score', 'youtube_not_sure',
+                        'twitch_url', 'twitch_score', 'twitch_not_sure'
                     ]
                     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
                     
